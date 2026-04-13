@@ -53,6 +53,35 @@ class ResultsPageTest extends AbstractPageTest
         self::assertEquals('2', $secondResult->getPosGender());
     }
 
+    public function testGenerateContentFemaleAthlete()
+    {
+        $scraper = new PageScraper();
+        $scraper->initialize(['raceId' => '7654']);
+
+        $parametersParsed = static::initParserFromFixturesJson(
+            new PageParser(),
+            $scraper,
+            'ResultsPage/race_page'
+        );
+
+        /** @var Result[] $results */
+        $results = $parametersParsed->getRecords();
+
+        // Index 6 is the first female in the fixture (AA=7)
+        $femaleResult = $results[6];
+
+        self::assertSame('PAPADOPOULOU MARIA', $femaleResult->getFullName());
+        self::assertSame('1050', $femaleResult->getBib());
+        self::assertSame('2200100', $femaleResult->getId());
+        self::assertSame('female', $femaleResult->getGender());
+        self::assertSame('F35', $femaleResult->getCategory());
+        self::assertSame('GRC', $femaleResult->getCountry());
+        self::assertEquals('7', $femaleResult->getPosGen());
+        self::assertEquals('1', $femaleResult->getPosGender());
+        self::assertEquals('1', $femaleResult->getPosCategory());
+        self::assertSame('01:18:22', $femaleResult->getTime());
+    }
+
     public function testGenerateContentPagination()
     {
         $scraper = new PageScraper();

@@ -2,43 +2,221 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Event Results - Test Event 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thessaloniki Marathon 2024 - Results | myrace.gr</title>
+    <link rel="stylesheet" href="/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Content/font-awesome.min.css" />
+    <link rel="stylesheet" href="/Content/main.css" />
 </head>
 <body>
-<div class="container">
+
+<header>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    <img src="/Content/Images/logo.png" alt="myrace.gr" height="40" />
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/en/events">Events</a></li>
+                    <li><a href="/en/calendar">Calendar</a></li>
+                    <li><a href="/en/contact">Contact</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            EN <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/gr/event/5896/results.html">GR</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container" style="margin-top:70px;">
+
     <div class="row">
         <div class="col-md-12">
-            <h1>Test Event 2025</h1>
-            <section class="events">
-                <div class="panel-group">
-                    <div class="panel">
-                        <a class="accordion-head" href="#">
-                            <h3>21.1 km Half Marathon</h3>
-                        </a>
-                        <div class="panel-body">
-                            <a class="btn-theme" href="/en/race/7654/results.html">View Results</a>
-                        </div>
-                    </div>
-                    <div class="panel">
-                        <a class="accordion-head" href="#">
-                            <h3>10 km Run</h3>
-                        </a>
-                        <div class="panel-body">
-                            <a class="btn-theme" href="/en/race/7655/results.html">View Results</a>
-                        </div>
-                    </div>
-                    <div class="panel">
-                        <a class="accordion-head" href="#">
-                            <h3>5 km Run</h3>
-                        </a>
-                        <div class="panel-body">
-                            <a class="btn-theme" href="/en/race/7656/results.html">View Results</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <ol class="breadcrumb">
+                <li><a href="/">Home</a></li>
+                <li><a href="/en/events">Events</a></li>
+                <li class="active">Thessaloniki Marathon 2024</li>
+            </ol>
         </div>
     </div>
-</div>
+
+    <div class="row event-header">
+        <div class="col-md-8">
+            <h1 class="event-title">Thessaloniki Marathon 2024</h1>
+            <p class="event-meta">
+                <span><i class="fa fa-calendar"></i> November 10, 2024</span>
+                &nbsp;&nbsp;
+                <span><i class="fa fa-map-marker"></i> Thessaloniki, Greece</span>
+            </p>
+            <p class="event-description">
+                The annual Thessaloniki Marathon brings together runners of all levels
+                along the scenic seafront of Greece's second-largest city.
+            </p>
+        </div>
+        <div class="col-md-4 text-right">
+            <img src="/Content/Events/5896/banner.jpg"
+                 class="img-responsive event-banner"
+                 alt="Thessaloniki Marathon 2024" />
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col-md-12">
+
+            <section class="events">
+                <h2 class="section-title">Races &amp; Results</h2>
+
+                <div class="panel-group" id="accordion-races">
+
+                    <!-- Race 1: Half Marathon -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a class="accordion-head" href="#race-7654"
+                               data-toggle="collapse" data-parent="#accordion-races">
+                                <h3>21.1 km Half Marathon</h3>
+                                <span class="pull-right toggle-icon">
+                                    <i class="fa fa-chevron-up"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div id="race-7654" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <ul class="list-unstyled race-details">
+                                            <li><strong>Distance:</strong> 21.1 km</li>
+                                            <li><strong>Participants:</strong> 2068</li>
+                                            <li><strong>Start time:</strong> 09:00</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6 text-right">
+                                        <a class="btn btn-theme"
+                                           href="/en/race/7654/results.html">
+                                            <i class="fa fa-list"></i> View Results
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Race 2: 10 km -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a class="accordion-head collapsed" href="#race-7655"
+                               data-toggle="collapse" data-parent="#accordion-races">
+                                <h3>10 km Run</h3>
+                                <span class="pull-right toggle-icon">
+                                    <i class="fa fa-chevron-down"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div id="race-7655" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <ul class="list-unstyled race-details">
+                                            <li><strong>Distance:</strong> 10 km</li>
+                                            <li><strong>Participants:</strong> 3541</li>
+                                            <li><strong>Start time:</strong> 10:00</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6 text-right">
+                                        <a class="btn btn-theme"
+                                           href="/en/race/7655/results.html">
+                                            <i class="fa fa-list"></i> View Results
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Race 3: 5 km -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a class="accordion-head collapsed" href="#race-7656"
+                               data-toggle="collapse" data-parent="#accordion-races">
+                                <h3>5 km Run</h3>
+                                <span class="pull-right toggle-icon">
+                                    <i class="fa fa-chevron-down"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div id="race-7656" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <ul class="list-unstyled race-details">
+                                            <li><strong>Distance:</strong> 5 km</li>
+                                            <li><strong>Participants:</strong> 1892</li>
+                                            <li><strong>Start time:</strong> 11:00</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6 text-right">
+                                        <a class="btn btn-theme"
+                                           href="/en/race/7656/results.html">
+                                            <i class="fa fa-list"></i> View Results
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /.panel-group -->
+            </section>
+
+        </div>
+    </div>
+
+</div><!-- /.container -->
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="/Content/Images/logo-white.png" alt="myrace.gr" height="30" />
+                <p class="footer-tagline">Your online race results platform</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="/en/events">Events</a></li>
+                    <li><a href="/en/calendar">Calendar</a></li>
+                    <li><a href="/en/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 text-right">
+                <p>&copy; 2024 myrace.gr &ndash; All Rights Reserved</p>
+                <p>
+                    <a href="/en/privacy">Privacy Policy</a> |
+                    <a href="/en/terms">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="/Scripts/jquery.min.js"></script>
+<script src="/Scripts/bootstrap.min.js"></script>
+<script src="/Scripts/main.js"></script>
+
 </body>
 </html>
