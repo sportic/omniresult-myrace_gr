@@ -174,7 +174,9 @@ function paginationUrl($targetPage, $raceId, $perPage) {
         <table>
             <thead>
                 <tr>
-                    <th>Pos</th>
+                    <th>Pos Gen</th>
+                    <th>Pos Cat</th>
+                    <th>Pos Gender</th>
                     <th>BIB</th>
                     <th>Name</th>
                     <th>Category</th>
@@ -186,6 +188,8 @@ function paginationUrl($targetPage, $raceId, $perPage) {
             <?php foreach ($results as $result): ?>
                 <tr>
                     <td><?= htmlspecialchars((string)$result->getPosGen()) ?></td>
+                    <td><?= htmlspecialchars((string)$result->getPosCategory()) ?></td>
+                    <td><?= htmlspecialchars((string)$result->getPosGender()) ?></td>
                     <td><?= htmlspecialchars((string)$result->getBib()) ?></td>
                     <td><?= htmlspecialchars((string)$result->getFullName()) ?></td>
                     <td><?= htmlspecialchars((string)$result->getCategory()) ?></td>

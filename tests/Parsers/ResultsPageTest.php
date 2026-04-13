@@ -79,7 +79,8 @@ class ResultsPageTest extends AbstractPageTest
         self::assertEquals('7', $femaleResult->getPosGen());
         self::assertEquals('1', $femaleResult->getPosGender());
         self::assertEquals('1', $femaleResult->getPosCategory());
-        self::assertSame('01:18:22', $femaleResult->getTime());
+        self::assertSame('01:18:19', $femaleResult->getTime());
+        self::assertSame('01:18:22', $femaleResult->getTimeGross());
     }
 
     public function testScraperUrlDefaults()

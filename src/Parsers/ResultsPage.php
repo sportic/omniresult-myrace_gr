@@ -65,7 +65,7 @@ class ResultsPage extends AbstractParser
         }
 
         $parameters['splits'] = $this->parseSplits($row);
-        $parameters['time'] = $this->parseFinishTime($row);
+        $this->parseFinishTime($row, $parameters);
 
         return new Result($parameters);
     }
@@ -128,7 +128,10 @@ class ResultsPage extends AbstractParser
     }
 
     /**
-     * Parse split times from result row
+     * Parse split times from result row.
+     * Finds all keys starting with "res_" (excluding "res_finish"), uses the
+     * suffix as the split name, and extracts up to two times per cell:
+     * the first (bold) is time_gross, the second is time.
      *
      * @param array $row
      * @return SplitCollection
@@ -136,52 +139,89 @@ class ResultsPage extends AbstractParser
     protected function parseSplits(array $row)
     {
         $splits = new SplitCollection();
-        $splitIndex = 1;
 
-        while (isset($row['res_split' . $splitIndex])) {
-            $splitHtml = $row['res_split' . $splitIndex];
-            $time = $this->extractTimeFromHtml($splitHtml);
-            if ($time !== null) {
-                $splits->add(new Split(['name' => 'split' . $splitIndex, 'time' => $time]));
+        foreach (array_keys($row) as $key) {
+            if (strncmp($key, 'res_', 4) !== 0 || $key === 'res_finish') {
+                continue;
             }
-            $splitIndex++;
+
+            $times = $this->extractTimesFromHtml($row[$key]);
+            if (empty($times)) {
+                continue;
+            }
+
+            $name = substr($key, 4);
+            $splitParams = ['name' => $name];
+            if (count($times) >= 2) {
+                $splitParams['timeGross'] = $times[0];
+                $splitParams['time']      = $times[1];
+            } else {
+                $splitParams['time'] = $times[0];
+            }
+
+            $splits->add(new Split($splitParams));
         }
 
         return $splits;
     }
 
     /**
-     * Parse finish time from result row
+     * Parse finish time from result row and populate time / timeGross.
+     * The first (bold) value is time_gross; the second value is time (net).
      *
      * @param array $row
-     * @return string|null
+     * @param array $parameters
      */
-    protected function parseFinishTime(array $row)
+    protected function parseFinishTime(array $row, array &$parameters)
     {
         if (!isset($row['res_finish'])) {
-            return null;
+            return;
         }
-        return $this->extractTimeFromHtml($row['res_finish']);
+
+        $times = $this->extractTimesFromHtml($row['res_finish']);
+        if (empty($times)) {
+            return;
+        }
+
+        if (count($times) >= 2) {
+            $parameters['timeGross'] = $times[0];
+            $parameters['time']      = $times[1];
+        } else {
+            $parameters['time'] = $times[0];
+        }
     }
 
     /**
-     * Extract time value from HTML (takes value from bold div = gun time)
+     * Extract all time values found inside div tags in the given HTML snippet.
+     * Returns them in document order; the first entry (bold div) is the gun /
+     * gross time, the second entry (plain div) is the net time.
+     *
+     * @param string $html
+     * @return string[]
+     */
+    protected function extractTimesFromHtml($html)
+    {
+        preg_match_all('#<div[^>]*>([\d:]+)</div>#i', $html, $matches);
+        $times = [];
+        foreach ($matches[1] as $t) {
+            $t = trim($t);
+            if (preg_match('#^\d{1,2}:\d{2}(:\d{2})?$#', $t)) {
+                $times[] = $t;
+            }
+        }
+        return $times;
+    }
+
+    /**
+     * Extract the first time value from HTML (backward-compatible helper).
      *
      * @param string $html
      * @return string|null
      */
     protected function extractTimeFromHtml($html)
     {
-        // Extract time from bold div: <div style="font-weight:bold">00:04:01</div>
-        if (preg_match('#<div[^>]*font-weight:bold[^>]*>([\d:]+)</div>#i', $html, $matches)) {
-            return trim($matches[1]);
-        }
-        // Fallback: strip all tags
-        $text = trim(strip_tags($html));
-        if (preg_match('#^[\d:]+$#', $text)) {
-            return $text;
-        }
-        return null;
+        $times = $this->extractTimesFromHtml($html);
+        return $times[0] ?? null;
     }
 
     /**
