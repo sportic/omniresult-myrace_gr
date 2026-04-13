@@ -54,10 +54,25 @@ class ResultPage extends AbstractParser
 
                 $field = array_search($label, $labelMap);
                 if ($field !== false) {
-                    $parameters[$field] = $value;
+                    $parameters[$field] = $this->normalizeFieldValue($field, $value);
                 }
             }
         }
+    }
+
+    /**
+     * Normalize a field value based on the field type
+     *
+     * @param string $field
+     * @param string $value
+     * @return string
+     */
+    protected function normalizeFieldValue($field, $value)
+    {
+        if ($field === 'gender') {
+            return strtolower($value);
+        }
+        return $value;
     }
 
     /**
