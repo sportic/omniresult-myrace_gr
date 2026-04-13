@@ -26,19 +26,37 @@ class EventPage extends AbstractParser
     protected function parseRaces()
     {
         $return = [];
-        $links = $this->getCrawler()->filterXPath('//a[@href]');
+        $panels = $this->getCrawler()->filterXPath(
+            '//section[contains(@class,"events")]'
+            . '//*[contains(@class,"panel-group")]'
+            . '//*[contains(@class,"panel")]'
+        );
 
-        foreach ($links as $link) {
-            $href = $link->getAttribute('href');
-            $raceId = $this->parseRaceIdFromHref($href);
-            if ($raceId !== null) {
-                $parameters = [
-                    'id' => $raceId,
-                    'name' => trim($link->textContent),
-                    'href' => $href,
-                ];
-                $return[] = new Race($parameters);
+        foreach ($panels as $panel) {
+            $panelCrawler = new \Symfony\Component\DomCrawler\Crawler($panel);
+
+            $nameNode = $panelCrawler->filterXPath(
+                './/a[contains(@class,"accordion-head")]//h3'
+            );
+            $linkNode = $panelCrawler->filterXPath(
+                './/a[contains(@class,"btn-theme")]'
+            );
+
+            if ($nameNode->count() === 0 || $linkNode->count() === 0) {
+                continue;
             }
+
+            $href = $linkNode->attr('href');
+            $raceId = $this->parseRaceIdFromHref($href);
+            if ($raceId === null) {
+                continue;
+            }
+
+            $return[] = new Race([
+                'id' => $raceId,
+                'name' => trim($nameNode->text()),
+                'href' => $href,
+            ]);
         }
 
         return $return;
