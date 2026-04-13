@@ -9,10 +9,12 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Sportic\Omniresult\MyraceGr\MyraceGrClient;
+use Sportic\Omniresult\MyraceGr\Scrapers\ResultPage as ResultScraper;
 
-$bibcardId = trim($_GET['bibcardId'] ?? '');
-$error     = null;
-$result    = null;
+$bibcardId  = trim($_GET['bibcardId'] ?? '');
+$error      = null;
+$result     = null;
+$requestUrl = null;
 
 if ($bibcardId !== '') {
     if (!ctype_digit($bibcardId)) {
@@ -20,6 +22,10 @@ if ($bibcardId !== '') {
         $bibcardId = '';
     } else {
         try {
+            $scraper = new ResultScraper();
+            $scraper->initialize(['bibcardId' => $bibcardId]);
+            $requestUrl = $scraper->getCrawlerUri();
+
             $client  = new MyraceGrClient();
             $content = $client->result(['bibcardId' => $bibcardId])->getContent();
             $result  = $content->getRecord();
@@ -43,12 +49,28 @@ if ($bibcardId !== '') {
         th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
         th { background: #f0f0f0; width: 40%; }
         .back { margin-bottom: 20px; display: inline-block; }
+        .request-details { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px;
+                           padding: 12px 16px; margin: 20px 0; font-size: 0.9rem; }
+        .request-details h3 { margin: 0 0 8px; font-size: 1rem; }
+        .request-details dl { margin: 0; display: grid; grid-template-columns: 80px 1fr; gap: 4px 12px; }
+        .request-details dt { font-weight: bold; color: #555; }
+        .request-details dd { margin: 0; word-break: break-all; }
     </style>
 </head>
 <body>
 <h1>myrace.gr – Athlete Result</h1>
 
 <a class="back" href="index.php">← Back to event URL entry</a>
+
+<?php if ($requestUrl !== null): ?>
+<div class="request-details">
+    <h3>Request sent by crawler</h3>
+    <dl>
+        <dt>Method</dt><dd>GET</dd>
+        <dt>URL</dt><dd><a href="<?= htmlspecialchars($requestUrl) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($requestUrl) ?></a></dd>
+    </dl>
+</div>
+<?php endif; ?>
 
 <?php if ($result === null): ?>
 <form method="get">

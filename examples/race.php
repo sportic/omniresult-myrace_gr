@@ -10,13 +10,15 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Sportic\Omniresult\MyraceGr\MyraceGrClient;
+use Sportic\Omniresult\MyraceGr\Scrapers\ResultsPage as ResultsScraper;
 
-$raceId  = trim($_GET['raceId'] ?? '');
-$page    = max(1, (int)($_GET['page'] ?? 1));
-$perPage = max(1, (int)($_GET['perPage'] ?? 50));
-$error   = null;
-$results = null;
+$raceId     = trim($_GET['raceId'] ?? '');
+$page       = max(1, (int)($_GET['page'] ?? 1));
+$perPage    = max(1, (int)($_GET['perPage'] ?? 50));
+$error      = null;
+$results    = null;
 $pagination = null;
+$requestUrl = null;
 
 if ($raceId !== '') {
     if (!ctype_digit($raceId)) {
@@ -24,6 +26,14 @@ if ($raceId !== '') {
         $raceId = '';
     } else {
         try {
+            $scraper = new ResultsScraper();
+            $scraper->initialize([
+                'raceId'  => $raceId,
+                'page'    => $page,
+                'perPage' => $perPage,
+            ]);
+            $requestUrl = $scraper->getCrawlerUri();
+
             $client     = new MyraceGrClient();
             $content    = $client->results([
                 'raceId'  => $raceId,
@@ -64,6 +74,12 @@ function paginationUrl($targetPage, $raceId, $perPage) {
         a.btn:hover { background: #0055aa; }
         a.btn.disabled { background: #aaa; pointer-events: none; }
         .back { margin-bottom: 20px; display: inline-block; }
+        .request-details { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px;
+                           padding: 12px 16px; margin: 20px 0; font-size: 0.9rem; }
+        .request-details h3 { margin: 0 0 8px; font-size: 1rem; }
+        .request-details dl { margin: 0; display: grid; grid-template-columns: 80px 1fr; gap: 4px 12px; }
+        .request-details dt { font-weight: bold; color: #555; }
+        .request-details dd { margin: 0; word-break: break-all; }
         .pagination { margin-top: 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .pagination-info { color: #555; font-size: 0.9rem; }
         .per-page-form { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; }
@@ -73,6 +89,16 @@ function paginationUrl($targetPage, $raceId, $perPage) {
 <h1>myrace.gr – Race Results</h1>
 
 <a class="back" href="index.php">← Back to event URL entry</a>
+
+<?php if ($requestUrl !== null): ?>
+<div class="request-details">
+    <h3>Request sent by crawler</h3>
+    <dl>
+        <dt>Method</dt><dd>GET</dd>
+        <dt>URL</dt><dd><a href="<?= htmlspecialchars($requestUrl) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($requestUrl) ?></a></dd>
+    </dl>
+</div>
+<?php endif; ?>
 
 <?php if ($results === null): ?>
 <form method="get">

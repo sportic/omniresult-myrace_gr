@@ -10,10 +10,12 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Sportic\Omniresult\MyraceGr\MyraceGrClient;
+use Sportic\Omniresult\MyraceGr\Scrapers\EventPage as EventScraper;
 
-$eventId = trim($_GET['eventId'] ?? '');
-$error   = null;
-$races   = null;
+$eventId    = trim($_GET['eventId'] ?? '');
+$error      = null;
+$races      = null;
+$requestUrl = null;
 
 if ($eventId !== '') {
     if (!ctype_digit($eventId)) {
@@ -21,6 +23,10 @@ if ($eventId !== '') {
         $eventId = '';
     } else {
         try {
+            $scraper = new EventScraper();
+            $scraper->initialize(['eventId' => $eventId]);
+            $requestUrl = $scraper->getCrawlerUri();
+
             $client  = new MyraceGrClient();
             $content = $client->event(['eventId' => $eventId])->getContent();
             $races   = $content->getRecords();
@@ -47,12 +53,28 @@ if ($eventId !== '') {
                 text-decoration: none; border-radius: 3px; font-size: 0.9rem; }
         a.btn:hover { background: #0055aa; }
         .back { margin-bottom: 20px; display: inline-block; }
+        .request-details { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px;
+                           padding: 12px 16px; margin: 20px 0; font-size: 0.9rem; }
+        .request-details h3 { margin: 0 0 8px; font-size: 1rem; }
+        .request-details dl { margin: 0; display: grid; grid-template-columns: 80px 1fr; gap: 4px 12px; }
+        .request-details dt { font-weight: bold; color: #555; }
+        .request-details dd { margin: 0; word-break: break-all; }
     </style>
 </head>
 <body>
 <h1>myrace.gr – Event Results</h1>
 
 <a class="back" href="index.php">← Back to event URL entry</a>
+
+<?php if ($requestUrl !== null): ?>
+<div class="request-details">
+    <h3>Request sent by crawler</h3>
+    <dl>
+        <dt>Method</dt><dd>GET</dd>
+        <dt>URL</dt><dd><a href="<?= htmlspecialchars($requestUrl) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($requestUrl) ?></a></dd>
+    </dl>
+</div>
+<?php endif; ?>
 
 <?php if ($races === null): ?>
 <form method="get">
