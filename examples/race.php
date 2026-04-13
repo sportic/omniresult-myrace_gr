@@ -41,7 +41,7 @@ if ($raceId !== '') {
                 'perPage' => $perPage,
             ])->getContent();
             $results    = $content->getRecords();
-            $pagination = $content->getParameter('pagination');
+            $pagination = $content->getPagination();
         } catch (\Exception $e) {
             $error = 'Failed to fetch race results: ' . $e->getMessage();
         }
