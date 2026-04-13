@@ -54,6 +54,7 @@ abstract class AbstractPageTest extends AbstractTest
         );
 
         $parser->initialize(['response' => $response]);
+        $parser->setScraper($scraper);
 
         return $parser->getContent();
     }

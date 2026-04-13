@@ -190,9 +190,26 @@ class ResultsPage extends AbstractParser
      */
     protected function parsePagination(array $data)
     {
+        $total    = isset($data['iTotalRecords']) ? (int)$data['iTotalRecords'] : 0;
+        $filtered = isset($data['iTotalDisplayRecords']) ? (int)$data['iTotalDisplayRecords'] : 0;
+
+        $page    = 1;
+        $perPage = 50;
+
+        $scraper = $this->getScraper();
+        if ($scraper !== null && method_exists($scraper, 'getPage')) {
+            $page    = $scraper->getPage();
+            $perPage = $scraper->getPerPage();
+        }
+
+        $pages = $perPage > 0 ? (int)ceil($filtered / $perPage) : 1;
+
         return [
-            'total' => isset($data['iTotalRecords']) ? (int)$data['iTotalRecords'] : 0,
-            'filtered' => isset($data['iTotalDisplayRecords']) ? (int)$data['iTotalDisplayRecords'] : 0,
+            'total'    => $total,
+            'filtered' => $filtered,
+            'page'     => $page,
+            'perPage'  => $perPage,
+            'pages'    => $pages,
         ];
     }
 

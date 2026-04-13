@@ -23,9 +23,41 @@ class ResultsPage extends AbstractScraper
     /**
      * @return int
      */
+    public function getPage()
+    {
+        return (int)$this->getParameter('page', 1);
+    }
+
+    /**
+     * Results per page passed to the myrace.gr API as iDisplayLength.
+     * Respects explicit 'perPage' parameter, falls back to legacy 'displayLength',
+     * then defaults to 50.
+     *
+     * @return int
+     */
+    public function getPerPage()
+    {
+        $perPage = $this->getParameter('perPage');
+        if ($perPage !== null) {
+            return (int)$perPage;
+        }
+        $displayLength = $this->getParameter('displayLength');
+        if ($displayLength !== null) {
+            return (int)$displayLength;
+        }
+        return 50;
+    }
+
+    /**
+     * @return int
+     */
     public function getDisplayStart()
     {
-        return $this->getParameter('displayStart', 0);
+        $explicit = $this->getParameter('displayStart');
+        if ($explicit !== null) {
+            return (int)$explicit;
+        }
+        return ($this->getPage() - 1) * $this->getPerPage();
     }
 
     /**
@@ -33,7 +65,7 @@ class ResultsPage extends AbstractScraper
      */
     public function getDisplayLength()
     {
-        return $this->getParameter('displayLength', 10000);
+        return $this->getPerPage();
     }
 
     /**
@@ -59,6 +91,8 @@ class ResultsPage extends AbstractScraper
 
         return [
             'response' => $this->getClient()->getResponse(),
+            'page'     => $this->getPage(),
+            'perPage'  => $this->getPerPage(),
         ];
     }
 

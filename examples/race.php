@@ -3,8 +3,8 @@
  * examples/race.php
  *
  * If no parameters: show a form to enter a raceId.
- * If raceId is provided: scrape the race results page and list all results,
- * each with a button that links to result.php with the required bibcardId.
+ * If raceId is provided: scrape the race results page and list results
+ * for the requested page, with pagination controls.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -12,6 +12,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Sportic\Omniresult\MyraceGr\Scrapers\ResultsPage as ResultsScraper;
 
 $raceId  = trim($_GET['raceId'] ?? '');
+$page    = max(1, (int)($_GET['page'] ?? 1));
+$perPage = max(1, (int)($_GET['perPage'] ?? 50));
 $error   = null;
 $results = null;
 $pagination = null;
@@ -23,7 +25,11 @@ if ($raceId !== '') {
     } else {
         try {
             $scraper = new ResultsScraper();
-            $scraper->initialize(['raceId' => $raceId]);
+            $scraper->initialize([
+                'raceId'  => $raceId,
+                'page'    => $page,
+                'perPage' => $perPage,
+            ]);
             $content    = $scraper->execute()->getContent();
             $results    = $content->getRecords();
             $pagination = $content->getParameter('pagination');
@@ -32,6 +38,14 @@ if ($raceId !== '') {
         }
     }
 }
+
+/**
+ * Build a URL for a given page keeping all other GET params intact.
+ */
+function paginationUrl($targetPage, $raceId, $perPage) {
+    return '?'
+        . http_build_query(['raceId' => $raceId, 'page' => $targetPage, 'perPage' => $perPage]);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,8 +53,8 @@ if ($raceId !== '') {
     <meta charset="UTF-8">
     <title>myrace.gr – Race <?= htmlspecialchars($raceId) ?></title>
     <style>
-        body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
-        input[type=text] { width: 100%; padding: 8px; font-size: 1rem; box-sizing: border-box; }
+        body { font-family: sans-serif; max-width: 960px; margin: 40px auto; }
+        input[type=text], select { padding: 6px 8px; font-size: 1rem; }
         button { margin-top: 10px; padding: 8px 20px; font-size: 1rem; cursor: pointer; }
         .error { color: red; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -49,7 +63,11 @@ if ($raceId !== '') {
         a.btn { display: inline-block; padding: 4px 12px; background: #0066cc; color: #fff;
                 text-decoration: none; border-radius: 3px; font-size: 0.85rem; }
         a.btn:hover { background: #0055aa; }
+        a.btn.disabled { background: #aaa; pointer-events: none; }
         .back { margin-bottom: 20px; display: inline-block; }
+        .pagination { margin-top: 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .pagination-info { color: #555; font-size: 0.9rem; }
+        .per-page-form { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -64,6 +82,13 @@ if ($raceId !== '') {
            placeholder="e.g. 7654"
            value="<?= htmlspecialchars($raceId) ?>">
     <br>
+    <label for="perPage"><strong>Results per page:</strong></label>
+    <select id="perPage" name="perPage">
+        <?php foreach ([10, 25, 50, 100] as $opt): ?>
+            <option value="<?= $opt ?>" <?= $opt === $perPage ? 'selected' : '' ?>><?= $opt ?></option>
+        <?php endforeach; ?>
+    </select>
+    <br>
     <button type="submit">Load Race</button>
 </form>
 <?php endif; ?>
@@ -74,9 +99,50 @@ if ($raceId !== '') {
 
 <?php if ($results !== null): ?>
     <h2>Results for race #<?= htmlspecialchars($raceId) ?></h2>
-    <?php if (is_array($pagination)): ?>
-        <p>Total records: <?= (int)($pagination['total'] ?? 0) ?></p>
-    <?php endif; ?>
+
+    <?php
+    $total      = (int)($pagination['total']    ?? 0);
+    $filtered   = (int)($pagination['filtered'] ?? 0);
+    $totalPages = (int)($pagination['pages']    ?? 1);
+    $offset     = ($page - 1) * $perPage + 1;
+    $offsetEnd  = min($page * $perPage, $filtered);
+    ?>
+
+    <div class="pagination">
+        <?php if ($page > 1): ?>
+            <a class="btn" href="<?= paginationUrl(1, $raceId, $perPage) ?>">« First</a>
+            <a class="btn" href="<?= paginationUrl($page - 1, $raceId, $perPage) ?>">‹ Prev</a>
+        <?php else: ?>
+            <a class="btn disabled">« First</a>
+            <a class="btn disabled">‹ Prev</a>
+        <?php endif; ?>
+
+        <span class="pagination-info">
+            Page <?= $page ?> of <?= $totalPages ?>
+            &nbsp;|&nbsp;
+            Showing <?= $offset ?>–<?= $offsetEnd ?> of <?= $filtered ?> results
+        </span>
+
+        <?php if ($page < $totalPages): ?>
+            <a class="btn" href="<?= paginationUrl($page + 1, $raceId, $perPage) ?>">Next ›</a>
+            <a class="btn" href="<?= paginationUrl($totalPages, $raceId, $perPage) ?>">Last »</a>
+        <?php else: ?>
+            <a class="btn disabled">Next ›</a>
+            <a class="btn disabled">Last »</a>
+        <?php endif; ?>
+
+        <form class="per-page-form" method="get">
+            <input type="hidden" name="raceId" value="<?= htmlspecialchars($raceId) ?>">
+            <input type="hidden" name="page" value="1">
+            <label for="perPageSwitch">Per page:</label>
+            <select id="perPageSwitch" name="perPage" onchange="this.form.submit()">
+                <?php foreach ([10, 25, 50, 100] as $opt): ?>
+                    <option value="<?= $opt ?>" <?= $opt === $perPage ? 'selected' : '' ?>><?= $opt ?></option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+    </div>
+
     <?php if (count($results) === 0): ?>
         <p>No results found.</p>
     <?php else: ?>
@@ -111,7 +177,28 @@ if ($raceId !== '') {
             <?php endforeach; ?>
             </tbody>
         </table>
+
+        <div class="pagination" style="margin-top:12px;">
+            <?php if ($page > 1): ?>
+                <a class="btn" href="<?= paginationUrl(1, $raceId, $perPage) ?>">« First</a>
+                <a class="btn" href="<?= paginationUrl($page - 1, $raceId, $perPage) ?>">‹ Prev</a>
+            <?php else: ?>
+                <a class="btn disabled">« First</a>
+                <a class="btn disabled">‹ Prev</a>
+            <?php endif; ?>
+
+            <span class="pagination-info">Page <?= $page ?> of <?= $totalPages ?></span>
+
+            <?php if ($page < $totalPages): ?>
+                <a class="btn" href="<?= paginationUrl($page + 1, $raceId, $perPage) ?>">Next ›</a>
+                <a class="btn" href="<?= paginationUrl($totalPages, $raceId, $perPage) ?>">Last »</a>
+            <?php else: ?>
+                <a class="btn disabled">Next ›</a>
+                <a class="btn disabled">Last »</a>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
 <?php endif; ?>
 </body>
 </html>
+
