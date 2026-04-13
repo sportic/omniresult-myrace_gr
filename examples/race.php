@@ -9,7 +9,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Sportic\Omniresult\MyraceGr\Scrapers\ResultsPage as ResultsScraper;
+use Sportic\Omniresult\MyraceGr\MyraceGrClient;
 
 $raceId  = trim($_GET['raceId'] ?? '');
 $page    = max(1, (int)($_GET['page'] ?? 1));
@@ -24,13 +24,12 @@ if ($raceId !== '') {
         $raceId = '';
     } else {
         try {
-            $scraper = new ResultsScraper();
-            $scraper->initialize([
+            $client     = new MyraceGrClient();
+            $content    = $client->results([
                 'raceId'  => $raceId,
                 'page'    => $page,
                 'perPage' => $perPage,
-            ]);
-            $content    = $scraper->execute()->getContent();
+            ])->getContent();
             $results    = $content->getRecords();
             $pagination = $content->getParameter('pagination');
         } catch (\Exception $e) {

@@ -8,7 +8,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Sportic\Omniresult\MyraceGr\Scrapers\ResultPage as ResultScraper;
+use Sportic\Omniresult\MyraceGr\MyraceGrClient;
 
 $bibcardId = trim($_GET['bibcardId'] ?? '');
 $error     = null;
@@ -20,9 +20,8 @@ if ($bibcardId !== '') {
         $bibcardId = '';
     } else {
         try {
-            $scraper = new ResultScraper();
-            $scraper->initialize(['bibcardId' => $bibcardId]);
-            $content = $scraper->execute()->getContent();
+            $client  = new MyraceGrClient();
+            $content = $client->result(['bibcardId' => $bibcardId])->getContent();
             $result  = $content->getRecord();
         } catch (\Exception $e) {
             $error = 'Failed to fetch result: ' . $e->getMessage();

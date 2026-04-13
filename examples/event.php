@@ -9,7 +9,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Sportic\Omniresult\MyraceGr\Scrapers\EventPage as EventScraper;
+use Sportic\Omniresult\MyraceGr\MyraceGrClient;
 
 $eventId = trim($_GET['eventId'] ?? '');
 $error   = null;
@@ -21,9 +21,8 @@ if ($eventId !== '') {
         $eventId = '';
     } else {
         try {
-            $scraper = new EventScraper();
-            $scraper->initialize(['eventId' => $eventId]);
-            $content = $scraper->execute()->getContent();
+            $client  = new MyraceGrClient();
+            $content = $client->event(['eventId' => $eventId])->getContent();
             $races   = $content->getRecords();
         } catch (\Exception $e) {
             $error = 'Failed to fetch event: ' . $e->getMessage();
