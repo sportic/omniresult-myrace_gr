@@ -100,11 +100,11 @@ function paginationUrl($targetPage, $raceId, $perPage) {
     <h2>Results for race #<?= htmlspecialchars($raceId) ?></h2>
 
     <?php
-    $total      = (int)($pagination['total']    ?? 0);
+    $total      = (int)($pagination['items']    ?? 0);
     $filtered   = (int)($pagination['filtered'] ?? 0);
     $totalPages = (int)($pagination['pages']    ?? 1);
     $offset     = ($page - 1) * $perPage + 1;
-    $offsetEnd  = min($page * $perPage, $filtered);
+    $offsetEnd  = min($page * $perPage, $total);
     ?>
 
     <div class="pagination">
@@ -119,7 +119,7 @@ function paginationUrl($targetPage, $raceId, $perPage) {
         <span class="pagination-info">
             Page <?= $page ?> of <?= $totalPages ?>
             &nbsp;|&nbsp;
-            Showing <?= $offset ?>–<?= $offsetEnd ?> of <?= $filtered ?> results
+            Showing <?= $offset ?>–<?= $offsetEnd ?> of <?= $total ?> results
         </span>
 
         <?php if ($page < $totalPages): ?>

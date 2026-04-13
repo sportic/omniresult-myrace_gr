@@ -29,7 +29,7 @@ class EventPage extends AbstractParser
         $panels = $this->getCrawler()->filterXPath(
             '//section[contains(@class,"events")]'
             . '//*[contains(@class,"panel-group")]'
-            . '//*[contains(@class,"panel")]'
+            . '//*[contains(@class,"event")]'
         );
 
         foreach ($panels as $panel) {

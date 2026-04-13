@@ -202,12 +202,12 @@ class ResultsPage extends AbstractParser
             $perPage = $scraper->getPerPage();
         }
 
-        $pages = $perPage > 0 ? (int)ceil($filtered / $perPage) : 1;
+        $pages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
 
         return [
-            'total'    => $total,
+            'items'    => $total,
             'filtered' => $filtered,
-            'page'     => $page,
+            'current'     => $page,
             'perPage'  => $perPage,
             'pages'    => $pages,
         ];

@@ -83,17 +83,13 @@ class ResultsPage extends AbstractScraper
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
-    protected function generateParserData()
+    protected function populateParserDataResponse(&$data)
     {
-        $this->getRequest();
-
-        return [
-            'response' => $this->getClient()->getResponse(),
-            'page'     => $this->getPage(),
-            'perPage'  => $this->getPerPage(),
-        ];
+        parent::populateParserDataResponse($data);
+        $data['page'] = $this->getPage();
+        $data['perPage'] = $this->getPerPage();
     }
 
     /**
