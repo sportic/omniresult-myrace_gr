@@ -128,7 +128,7 @@ function paginationUrl($targetPage, $raceId, $perPage) {
     <?php
     $total      = (int)($pagination['items']    ?? 0);
     $filtered   = (int)($pagination['filtered'] ?? 0);
-    $totalPages = (int)($pagination['pages']    ?? 1);
+    $totalPages = (int)($pagination['all']    ?? 1);
     $offset     = ($page - 1) * $perPage + 1;
     $offsetEnd  = min($page * $perPage, $total);
     ?>

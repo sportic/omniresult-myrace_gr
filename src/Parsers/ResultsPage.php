@@ -246,10 +246,10 @@ class ResultsPage extends AbstractParser
 
         return [
             'items'    => $total,
-            'filtered' => $filtered,
             'current'     => $page,
+            'all'    => $pages,
+            'filtered' => $filtered,
             'perPage'  => $perPage,
-            'pages'    => $pages,
         ];
     }
 
