@@ -154,7 +154,7 @@ class ResultsPage extends AbstractParser
             $splitParams = ['name' => $name];
             if (count($times) >= 2) {
                 $splitParams['timeGross'] = $times[0];
-                $splitParams['time']      = $times[1];
+                $splitParams['time'] = $times[1];
             } else {
                 $splitParams['time'] = $times[0];
             }
@@ -185,7 +185,7 @@ class ResultsPage extends AbstractParser
 
         if (count($times) >= 2) {
             $parameters['timeGross'] = $times[0];
-            $parameters['time']      = $times[1];
+            $parameters['time'] = $times[1];
         } else {
             $parameters['time'] = $times[0];
         }
@@ -230,26 +230,26 @@ class ResultsPage extends AbstractParser
      */
     protected function parsePagination(array $data)
     {
-        $total    = isset($data['iTotalRecords']) ? (int)$data['iTotalRecords'] : 0;
+        $total = isset($data['iTotalRecords']) ? (int)$data['iTotalRecords'] : 0;
         $filtered = isset($data['iTotalDisplayRecords']) ? (int)$data['iTotalDisplayRecords'] : 0;
-
-        $page    = 1;
-        $perPage = 50;
 
         $scraper = $this->getScraper();
         if ($scraper !== null && method_exists($scraper, 'getPage')) {
-            $page    = $scraper->getPage();
+            $page = $scraper->getPage();
             $perPage = $scraper->getPerPage();
         }
+
+        $page = $page > 0 ? $page : 1;
+        $perPage = $perPage ?? 50;
 
         $pages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
 
         return [
-            'items'    => $total,
-            'current'     => $page,
-            'all'    => $pages,
+            'items' => $total,
+            'current' => $page,
+            'all' => $pages,
             'filtered' => $filtered,
-            'perPage'  => $perPage,
+            'perPage' => $perPage,
         ];
     }
 
