@@ -2,10 +2,12 @@
 
 namespace Sportic\Omniresult\MyraceGr\Parsers;
 
+use Nip\Utility\Str;
 use Sportic\Omniresult\Common\Content\ListContent;
 use Sportic\Omniresult\Common\Models\Result;
 use Sportic\Omniresult\Common\Models\Split;
 use Sportic\Omniresult\Common\Models\SplitCollection;
+use Sportic\Omniresult\MyraceGr\Utility\CategoryParse;
 
 /**
  * Class ResultsPage
@@ -114,17 +116,9 @@ class ResultsPage extends AbstractParser
             $parameters['fullName'] = trim(strip_tags($matches[1]));
         }
 
-        // Extract gender, birth year, category, nationality from second div
-        // Format: "Male - 2005 (M) - ROU" or "Male - 1987 (M35) - GRC"
-        if (preg_match(
-            '#(Male|Female)\s*-\s*(\d{4})\s*\(([^)]+)\)\s*-\s*([A-Z]{2,3})#i',
-            $lastnameHtml,
-            $matches
-        )) {
-            $parameters['gender'] = strtolower(trim($matches[1]));
-            $parameters['category'] = trim($matches[3]);
-            $parameters['country'] = trim($matches[4]);
-        }
+        $secondDiv = Str::after($lastnameHtml, '</div>');
+        $secondDiv = strip_tags($secondDiv);
+        $parameters = array_merge($parameters, CategoryParse::parse($secondDiv));
     }
 
     /**

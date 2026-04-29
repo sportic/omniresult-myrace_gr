@@ -24,7 +24,7 @@ if ($eventId !== '') {
     } else {
         try {
             $scraper = new EventScraper();
-            $scraper->initialize(['eventId' => $eventId]);
+
             $requestUrl = $scraper->getCrawlerUri();
 
             $client  = new MyraceGrClient();

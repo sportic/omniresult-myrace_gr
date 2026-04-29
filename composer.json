@@ -12,6 +12,7 @@
         "php": "^8.2",
         "ext-dom": "*",
         "ext-json": "*",
+        "bytic/utility": "^1.0|^2.0",
         "sportic/omniresult-common": "^1.0"
     },
     "require-dev": {
@@ -24,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Sportic\\Omniresult\\MyraceGr\\Tests\\": "tests/"
+            "Sportic\\Omniresult\\MyraceGr\\Tests\\": "tests/src"
         }
     },
     "prefer-stable": true,

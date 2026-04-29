@@ -192,7 +192,13 @@ function paginationUrl($targetPage, $raceId, $perPage) {
                     <td><?= htmlspecialchars((string)$result->getPosGender()) ?></td>
                     <td><?= htmlspecialchars((string)$result->getBib()) ?></td>
                     <td><?= htmlspecialchars((string)$result->getFullName()) ?></td>
-                    <td><?= htmlspecialchars((string)$result->getCategory()) ?></td>
+                    <td>
+                        <small style="font-weight: bold;">
+                            Gender: <?= htmlspecialchars((string)$result->getGender()) ?>
+                        </small>
+                        <br>
+                        <?= htmlspecialchars((string)$result->getCategory()) ?>
+                    </td>
                     <td><?= htmlspecialchars((string)$result->getTime()) ?></td>
                     <td>
                         <?php if ($result->getId()): ?>
