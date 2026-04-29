@@ -1,0 +1,40 @@
+{
+    "name": "sportic/omniresult-myrace_gr",
+    "description": "a scraper for getting data from myrace.gr websites",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gabriel Solomon",
+            "email": "hello@gabrielsolomon.ro"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "sportic/omniresult-common": "^1.0"
+    },
+    "require-dev": {
+        "bytic/phpqatools": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sportic\\Omniresult\\MyraceGr\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sportic\\Omniresult\\MyraceGr\\Tests\\": "tests/"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "ergebnis/composer-normalize": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "bytic/phpqatools": true
+        }
+    }
+}
