@@ -18,6 +18,18 @@ class CategoryParse
             return $params;
         }
 
+        // Full pattern: "Male - 1994 - ROU"
+        if (preg_match(
+            '#^(Male|Female)\s*-\s*(\d{4})\s*-\s*([A-Z]{2,3})$#i',
+            $string,
+            $matches
+        )) {
+            $params['gender'] = strtolower(trim($matches[1]));
+            $params['yob'] = trim($matches[2]);
+            $params['country'] = trim($matches[3]);
+            return $params;
+        }
+
         // Full pattern: "Male - 2005 (M) - ROU"
         if (preg_match(
             '#^(Male|Female)\s*-\s*(\d{4})\s*\(([^)]+)\)\s*-\s*([A-Z]{2,3})$#i',

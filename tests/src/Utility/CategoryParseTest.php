@@ -26,6 +26,7 @@ class CategoryParseTest extends TestCase
             ['Female', ['gender' => 'Female']],
             ['Mixed', ['gender' => '']],
             ['Male - 1981', ['gender' => 'male', 'yob'=> '1981']],
+            ['Male - 1994 - ROU', ['gender' => 'male', 'yob'=> '1994', 'country' => 'ROU']],
             ['Male - 2005 (M)', ['gender' => 'male', 'yob'=> '2005', 'category' => 'M']],
             ['Male - 2005 (M) - ROU', ['gender' => 'male', 'yob'=> '2005', 'category' => 'M', 'country' => 'ROU']],
         ];
