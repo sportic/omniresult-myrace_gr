@@ -20,7 +20,7 @@ class ResultPage extends AbstractParser
     {
         $parameters = $this->parseContent();
         return [
-            'source_uri' => $this->getScraper()->getCrawlerUri(),
+            RecordContent::KEY_SOURCE_URI => $this->getScraper()->getCrawlerUri(),
             'record' => new Result($parameters)
         ];
     }
