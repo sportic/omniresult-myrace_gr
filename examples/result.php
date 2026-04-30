@@ -97,6 +97,7 @@ if ($bibcardId !== '') {
         <tr><th>Nationality</th>  <td><?= htmlspecialchars((string)$result->getCountry()) ?></td></tr>
         <tr><th>Position (Gen)</th><td><?= htmlspecialchars((string)$result->getPosGen()) ?></td></tr>
         <tr><th>Position (Cat)</th><td><?= htmlspecialchars((string)$result->getPosCategory()) ?></td></tr>
+        <tr><th>Position (Gender)</th><td><?= htmlspecialchars((string)$result->getPosGender()) ?></td></tr>
         <tr><th>Net Time</th>     <td><?= htmlspecialchars((string)$result->getTime()) ?></td></tr>
         <tr><th>Gun Time</th>     <td><?= htmlspecialchars((string)$result->getTimeGross()) ?></td></tr>
     </table>
@@ -108,13 +109,18 @@ if ($bibcardId !== '') {
     <h3>Splits</h3>
     <table>
         <thead>
-            <tr><th>Checkpoint</th><th>Time</th></tr>
+            <tr>
+                <th>Checkpoint</th>
+                <th>Time</th>
+                <th>Time Gross</th>
+            </tr>
         </thead>
         <tbody>
         <?php foreach ($splits as $split): ?>
             <tr>
                 <td><?= htmlspecialchars((string)$split->getName()) ?></td>
                 <td><?= htmlspecialchars((string)$split->getTime()) ?></td>
+                <td><?= htmlspecialchars((string)$split->getTimeGross()) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>

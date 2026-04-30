@@ -49,17 +49,33 @@ class ResultPage extends AbstractParser
 
         $labelMap = static::getLabelMaps();
 
+        $firstName = null;
+        $lastName = null;
+
         foreach ($rows as $row) {
             $cells = $row->getElementsByTagName('td');
             if ($cells->length >= 2) {
                 $label = trim(strip_tags($cells->item(0)->textContent));
                 $value = trim(strip_tags($cells->item(1)->textContent));
 
-                $field = array_search($label, $labelMap);
-                if ($field !== false) {
+                if ($label === 'Surname:') {
+                    $lastName = $value;
+                    continue;
+                }
+                if ($label === 'Name:') {
+                    $firstName = $value;
+                    continue;
+                }
+
+                if (isset($labelMap[$label])) {
+                    $field = $labelMap[$label];
                     $parameters[$field] = $this->normalizeFieldValue($field, $value);
                 }
             }
+        }
+
+        if ($firstName || $lastName) {
+            $parameters['fullName'] = trim($lastName . ' ' . $firstName);
         }
     }
 
@@ -72,8 +88,9 @@ class ResultPage extends AbstractParser
      */
     protected function normalizeFieldValue($field, $value)
     {
-        if ($field === 'gender') {
-            return strtolower($value);
+        if (strpos($field, 'gender') === 0) {
+            $value = strtolower($value);
+            return $value === 'm' ? 'male' : ($value === 'f' ? 'female' : $value);
         }
         return $value;
     }
@@ -87,22 +104,40 @@ class ResultPage extends AbstractParser
     {
         $splits = new SplitCollection();
         $splitRows = $this->getCrawler()->filterXPath(
-            '//table[contains(@class,"table-splits")]//tr'
+            '//table[contains(@class,"table-splits")]//tr | //table[caption[contains(text(), "RESULTS")]]//tr'
         );
 
         foreach ($splitRows as $row) {
             $cells = $row->getElementsByTagName('td');
             if ($cells->length >= 2) {
                 $name = trim(strip_tags($cells->item(0)->textContent));
+                if (empty($name)) {
+                    continue;
+                }
                 $time = trim(strip_tags($cells->item(1)->textContent));
                 if ($name && $time) {
-                    $splits->add(new Split(['name' => $name, 'time' => $time]));
+                    $splitParameters = ['name' => $name, 'time' => $time];
+                    if ($cells->length >= 3) {
+                        $timeValue = $time;
+                        $timeNetOrPace = trim(strip_tags($cells->item(2)->textContent));
+                        if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $timeNetOrPace)) {
+                            $splitParameters['time'] = $timeNetOrPace;
+                            $splitParameters['timeGross'] = $timeValue;
+                        }
+                    }
+                    $splits->add(new Split($splitParameters));
                 }
             }
         }
 
         if (count($splits) > 0) {
             $parameters['splits'] = $splits;
+            $splitsArray = $splits->all();
+            $lastSplit = end($splitsArray);
+            if ($lastSplit->getName() === 'Finish') {
+                $parameters['time'] = $lastSplit->getTime();
+                $parameters['timeGross'] = $lastSplit->getTimeGross();
+            }
         }
     }
 
@@ -112,16 +147,22 @@ class ResultPage extends AbstractParser
     protected static function getLabelMaps()
     {
         return [
-            'fullName' => 'Name',
-            'bib' => 'BIB',
-            'gender' => 'Gender',
-            'category' => 'Category',
-            'country' => 'Nationality',
-            'posGen' => 'Position',
-            'posGender' => 'Position/Gender',
-            'posCategory' => 'Position/Category',
-            'time' => 'Time',
-            'timeGross' => 'Gun Time',
+            'Name' => 'fullName',
+            'BIB' => 'bib',
+            'BIB:' => 'bib',
+            'Gender' => 'gender',
+            'Sex:' => 'gender',
+            'Category' => 'category',
+            'Age Group:' => 'category',
+            'Nationality' => 'country',
+            'Nationality:' => 'country',
+            'Position' => 'posGen',
+            'General Ranking:' => 'posGen',
+            'Position/Gender' => 'posGender',
+            'Ranking / Sex:' => 'posGender',
+            'Position/Category' => 'posCategory',
+            'Time' => 'time',
+            'Gun Time' => 'timeGross',
         ];
     }
 
