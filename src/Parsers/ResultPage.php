@@ -19,7 +19,10 @@ class ResultPage extends AbstractParser
     protected function generateContent()
     {
         $parameters = $this->parseContent();
-        return ['record' => new Result($parameters)];
+        return [
+            'source_uri' => $this->getScraper()->getCrawlerUri(),
+            'record' => new Result($parameters)
+        ];
     }
 
     /**

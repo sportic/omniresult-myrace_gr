@@ -69,7 +69,7 @@ class ResultsPage extends AbstractParser
         $parameters['splits'] = $this->parseSplits($row);
         $this->parseFinishTime($row, $parameters);
 
-        $parameters['category'] = $parameters['category'] ?: $parameters['gender'];
+        $parameters['category'] = !empty($parameters['category']) ?: $parameters['gender'];
         return new Result($parameters);
     }
 

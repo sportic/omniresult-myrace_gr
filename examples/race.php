@@ -199,7 +199,12 @@ function paginationUrl($targetPage, $raceId, $perPage) {
                         <br>
                         <?= htmlspecialchars((string)$result->getCategory()) ?>
                     </td>
-                    <td><?= htmlspecialchars((string)$result->getTime()) ?></td>
+                    <td>
+                        <?= htmlspecialchars((string)$result->getTime()) ?>
+                        <small style="color: #666; font-size: 0.8rem; display: block; font-weight: bold;">
+                            <?= htmlspecialchars((string)$result->getTimeGross()) ?>
+                        </small>
+                    </td>
                     <td>
                         <?php if ($result->getId()): ?>
                             <a class="btn"
