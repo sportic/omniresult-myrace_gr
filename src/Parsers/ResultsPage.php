@@ -69,7 +69,7 @@ class ResultsPage extends AbstractParser
         $parameters['splits'] = $this->parseSplits($row);
         $this->parseFinishTime($row, $parameters);
 
-        $parameters['category'] = !empty($parameters['category']) ?: $parameters['gender'];
+        $parameters['category'] = !empty($parameters['category']) ? $parameters['category'] : (isset($parameters['gender']) ? $parameters['gender'] : null);
         return new Result($parameters);
     }
 
@@ -117,9 +117,11 @@ class ResultsPage extends AbstractParser
             $parameters['fullName'] = trim(strip_tags($matches[1]));
         }
 
-        $secondDiv = Str::after($lastnameHtml, '</div>');
-        $secondDiv = strip_tags($secondDiv);
-        $parameters = array_merge($parameters, CategoryParse::parse($secondDiv));
+        $parts = explode('</div>', $lastnameHtml);
+        if (count($parts) > 1) {
+            $secondDiv = strip_tags($parts[1]);
+            $parameters = array_merge($parameters, CategoryParse::parse(trim($secondDiv)));
+        }
     }
 
     /**
@@ -228,21 +230,20 @@ class ResultsPage extends AbstractParser
         $total = isset($data['iTotalRecords']) ? (int)$data['iTotalRecords'] : 0;
         $filtered = isset($data['iTotalDisplayRecords']) ? (int)$data['iTotalDisplayRecords'] : 0;
 
+        $page = 1;
+        $perPage = 50;
         $scraper = $this->getScraper();
         if ($scraper !== null && method_exists($scraper, 'getPage')) {
             $page = $scraper->getPage();
             $perPage = $scraper->getPerPage();
         }
 
-        $page = $page > 0 ? $page : 1;
-        $perPage = $perPage ?? 50;
-
         $pages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
 
         return [
-            'items' => $total,
-            'current' => $page,
-            'all' => $pages,
+            'total' => $total,
+            'page' => $page,
+            'pages' => $pages,
             'filtered' => $filtered,
             'perPage' => $perPage,
         ];
